@@ -9,27 +9,28 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Reads chef_berlesek_2025.csv and locates it in the shared resources folder. */
+
 public final class CsvLoader {
     public static final String FILE_NAME = "chef_berlesek_2025.csv";
-    private static final String HEADER = "uid;chefid;startdate;enddate;daily_rate;name;cuisine";
+    private static final String HEADER = "uid,chefid,startdate,enddate,daily_rate,name,cuisine";
 
     private CsvLoader() { }
 
-    /**
-     * Finds resources/chef_berlesek_2025.csv by walking up from the working directory,
-     * so it works from the workspace root, from Chef_Statistic_System_Console, or from target/.
-     */
+
     public static Path locate() {
         Path dir = Path.of("").toAbsolutePath();
         while (dir != null) {
-            Path candidate = dir.resolve("resources").resolve(FILE_NAME);
+            Path candidate = dir.resolve("src")
+                    .resolve("main")
+                    .resolve("resources")
+                    .resolve(FILE_NAME);
+
             if (Files.isRegularFile(candidate)) {
                 return candidate;
             }
             dir = dir.getParent();
         }
-        throw new IllegalStateException("A resources/" + FILE_NAME
+        throw new IllegalStateException("A src/main/resources/" + FILE_NAME
                 + " fájl nem található a munkakönyvtárban és annak szülőmappáiban. "
                 + "Adja meg a CSV elérési útját az első argumentumként.");
     }
@@ -58,7 +59,7 @@ public final class CsvLoader {
     }
 
     static Berles parse(String line) {
-        String[] f = line.split(";", -1);
+        String[] f = line.split(",", -1);
         if (f.length != 7) {
             throw new IllegalArgumentException("7 oszlop helyett " + f.length + " található");
         }
